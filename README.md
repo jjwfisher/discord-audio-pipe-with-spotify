@@ -12,6 +12,21 @@ You can download the latest release [**here**](https://github.com/QiCuiHub/disco
 1. Follow the steps [**here**](https://docs.pycord.dev/en/master/discord.html) to setup and invite a discord bot
 2. To link the program to your bot, create a file ``token.txt`` in the same directory as the `.exe` / `main.pyw` and save the bot token inside
 
+## Setting up Spotify Functions
+1. Go to the [**Spotify Developer Dashboard**](https://developer.spotify.com/dashboard), logging in with your existing spotify account if not already.
+2. On your dashboard, click "Create App"
+3. Put anything you like into all the fields, except for `"Redirect URL"`. This should be `http://localhost:xxxx`, where `xxxx` is a given port. (Shouldn't matter what you choose, I used 8080).
+4. In the Spotify Developer Dashboard, click "Settings", then the "Basic Information" tab.
+5. When starting DAP, it will ask you for your Spotify API details. Enter your client ID, then click _"View Client Secret"_, and enter this. Finally enter the redirect url you have chosen.
+6. When a browser window opens, login in with your Spotify account (if needed), and allow acccess to your application.
+7. You should be done! In the future a browser window will open and close itself temporarily to log you in to the Spotify API.
+
+## Spotify Usage
+- To create a "Now Playing" message, message `?np` to any channel the bot has access to.
+    - The bot will automatically clean up (delete) your message, and any previous messages it has sent that session. The bot requires the `Manage Messages` permission in Discord to do this. **It also requires the "Read Messages" intent, which you can give in your discord developer settings.**
+- The bot will update the latest "Now Playing" message every 5 seconds, and will also update the bot's status.
+- If nothing is playing/Spotify is not open, a special embed message will appear noting this.
+
 ## Dependencies
 Requires Python 3.8+. Install dependencies by running `pip3 install -r requirements.txt`
 
