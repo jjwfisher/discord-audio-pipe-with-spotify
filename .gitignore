@@ -5,4 +5,7 @@ token.txt
 *.dll
 main.py
 build/main
-.vscode
+*.vscode
+spotTokens.json
+*.code-workspace
+*.bat

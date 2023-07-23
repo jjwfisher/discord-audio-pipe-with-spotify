@@ -385,7 +385,7 @@ class GUI(QMainWindow):
 
     async def ready(self):
         await self.bot.wait_until_ready()
-
+        
         self.info.setText(f"Logged in as: {self.bot.user.name}")
         self.connections[0].set_servers(self.bot.guilds)
         Connection.resize_combobox(self.connections[0].servers)
