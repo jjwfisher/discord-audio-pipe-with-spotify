@@ -4,6 +4,8 @@
 
 Simple program to send stereo audio (microphone, stereo mix, virtual audio cable, etc) into a discord bot.
 
+This fork adds Spotify functionality, to allow the bot to show what is currently playing on a user's Spotify account.
+
 You can download the latest release [**here**](https://github.com/QiCuiHub/discord-audio-pipe/releases)
 - If you are using the source code, install the dependencies and start the program using `main.pyw`
 - The `.exe` does not require python or dependencies
