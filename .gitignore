@@ -9,3 +9,4 @@ build/main
 spotTokens.json
 *.code-workspace
 *.bat
+.cache

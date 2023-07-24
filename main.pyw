@@ -202,7 +202,7 @@ nowPlayingID = None
 nowPlayingChannel = None
 oldNowPlayingID = None
 oldNowPlayingChannel = None
-
+firstCall = True
 
 bot = commands.Bot(command_prefix='?', intents = intents)
 
@@ -220,14 +220,14 @@ async def on_ready():
 async def update_activity():
     '''Updates activity of discord bot, using type listening, with current track name and artist name'''
     global spotEmbed
-
-    spotData = sp.spotAPIcall(spotify,'activity')
+    
+    spotData = sp.spotAPIcall(spotify,'activity')  #call embed creator
+    spotEmbed = sp.spotAPIcall(spotify,'embed') #call activity API call
     if spotData != None: #if API call has returned data.
         name = f" {spotData.trName} by {spotData.artName}"
         currentAct = discord.Activity(type=discord.ActivityType.listening, name=name)
         await bot.change_presence(activity=currentAct)
         if nowPlayingID != None: #if a current nowplaying message exists, update it.
-            spotEmbed = sp.spotAPIcall(spotify,'embed') #call embed creator
             channel = bot.get_channel(nowPlayingChannel) #fetch channel last message existed in
             message = await channel.fetch_message(nowPlayingID) #fetch last embed message
             await message.edit(embed=spotEmbed) #updates last embed message
@@ -240,7 +240,9 @@ async def np(ctx):
     global nowPlayingChannel
     global oldNowPlayingID
     global oldNowPlayingChannel
-
+    
+    #spotEmbed = sp.spotAPIcall(spotify,'embed')
+    
     #global vars are created so update_activity() can access it.
     if nowPlayingID != None: #checks for existing message when called. If no existing message moves on.
         oldNowPlayingID = nowPlayingID
