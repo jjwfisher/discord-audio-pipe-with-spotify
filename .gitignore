@@ -1,12 +1,11 @@
 __pycache__/
 token.txt
+spotTokens.json
 *.exe
 *.log
 *.dll
-main.py
 build/main
 *.vscode
-spotTokens.json
 *.code-workspace
 *.bat
 .cache

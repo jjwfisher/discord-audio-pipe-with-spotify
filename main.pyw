@@ -227,10 +227,10 @@ async def update_activity():
         name = f" {spotData.trName} by {spotData.artName}"
         currentAct = discord.Activity(type=discord.ActivityType.listening, name=name)
         await bot.change_presence(activity=currentAct)
-        if nowPlayingID != None: #if a current nowplaying message exists, update it.
-            channel = bot.get_channel(nowPlayingChannel) #fetch channel last message existed in
-            message = await channel.fetch_message(nowPlayingID) #fetch last embed message
-            await message.edit(embed=spotEmbed) #updates last embed message
+    if nowPlayingID != None: #if a current nowplaying message exists, update it.
+        channel = bot.get_channel(nowPlayingChannel) #fetch channel last message existed in
+        message = await channel.fetch_message(nowPlayingID) #fetch last embed message
+        await message.edit(embed=spotEmbed) #updates last embed message
     else:
         await bot.change_presence(status = None) #if no data from the API call, clear the activity.
 

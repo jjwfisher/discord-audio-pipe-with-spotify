@@ -164,8 +164,6 @@ def spotAPIcall(spotify, type):
                 lastArtName = spotData.artName
                 lastAlbArt = spotData.albArt
                 return createPlayingEmbed(spotData)
-            else:
-                return None
         else: #else if something is not playing, create the not playing embed and return this to update_activity or np command.
             return createNotPlayingEmbed()
     
