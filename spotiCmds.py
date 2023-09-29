@@ -144,26 +144,26 @@ def spotAPIcall(spotify, type):
     nextTrack = spotify.queue()
     #above fetches current data
 
-    if type == 'activity': #if type is to update bot activity, and something is playing, fetch the data, update the global vars and return data to update_activity
-        if currentTrack != None:
-            spotData = spotDataExtract(currentTrack,nextTrack)
-            if spotData != None:
-                lastTrName = spotData.trName
-                lastArtName = spotData.artName
-                lastAlbArt = spotData.albArt
-                return spotData
-            else:
-                return None
-        else:
-            return None #else, return none
-    elif type == 'embed': #if type is to update embed, and something is playing, fetch data update global vars and return embed to update_activity or np command.
-        if currentTrack != None:
-            spotData = spotDataExtract(currentTrack,nextTrack)
-            if spotData != None:
-                lastTrName = spotData.trName
-                lastArtName = spotData.artName
-                lastAlbArt = spotData.albArt
-                return createPlayingEmbed(spotData)
-        else: #else if something is not playing, create the not playing embed and return this to update_activity or np command.
-            return createNotPlayingEmbed()
+    # if type == 'activity': #if type is to update bot activity, and something is playing, fetch the data, update the global vars and return data to update_activity
+    #     if currentTrack != None:
+    #         spotData = spotDataExtract(currentTrack,nextTrack)
+    #         if spotData != None:
+    #             lastTrName = spotData.trName
+    #             lastArtName = spotData.artName
+    #             lastAlbArt = spotData.albArt
+    #             return spotData
+    #         else:
+    #             return None
+    #     else:
+    #         return None #else, return none
+    #type == 'embed': #if type is to update embed, and something is playing, fetch data update global vars and return embed to update_activity or np command.
+    if currentTrack != None:
+        spotData = spotDataExtract(currentTrack,nextTrack)
+        if spotData != None:
+            lastTrName = spotData.trName
+            lastArtName = spotData.artName
+            lastAlbArt = spotData.albArt
+            return createPlayingEmbed(spotData)
+    else: #else if something is not playing, create the not playing embed and return this to update_activity or np command.
+        return createNotPlayingEmbed()
     

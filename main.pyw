@@ -99,8 +99,8 @@ if is_gui:
     global dialog
     app = QApplication(sys.argv)
     msg = QMessageBox()
-    msg.setIcon(QMessageBox.Information)
-    dialog = sp.spotTokenEntry()
+    msg.setIcon(QMessageBox.Information) #sets up general gui interface for any queries.
+    dialog = sp.spotTokenEntry() #defines global dialog based on token entry function
 
 # main
 async def main(bot):
@@ -213,35 +213,30 @@ async def on_ready():
     # Waiting until the bot is ready
     await bot.wait_until_ready()
     print(f"Bot is ready!")
-    # Starting the loop
+    # # Starting the loop
     update_activity.start()
 
-@tasks.loop(seconds=5)
+@tasks.loop(seconds=10)
 async def update_activity():
-    '''Updates activity of discord bot, using type listening, with current track name and artist name'''
-    global spotEmbed
-    
-    spotData = sp.spotAPIcall(spotify,'activity')  #call embed creator
-    spotEmbed = sp.spotAPIcall(spotify,'embed') #call activity API call
-    if spotData != None: #if API call has returned data.
-        name = f" {spotData.trName} by {spotData.artName}"
-        currentAct = discord.Activity(type=discord.ActivityType.listening, name=name)
-        await bot.change_presence(activity=currentAct)
-    if nowPlayingID != None: #if a current nowplaying message exists, update it.
-        channel = bot.get_channel(nowPlayingChannel) #fetch channel last message existed in
-        message = await channel.fetch_message(nowPlayingID) #fetch last embed message
-        await message.edit(embed=spotEmbed) #updates last embed message
-    else:
-        await bot.change_presence(status = None) #if no data from the API call, clear the activity.
-
+    '''Updates embed every 10 seconds, if the embed exists'''
+    try:
+        if nowPlayingID != None: #if a current nowplaying message exists, update it.
+            spotEmbed = sp.spotAPIcall(spotify,'embed') #creates the embed
+            channel = bot.get_channel(nowPlayingChannel) #fetch channel last message existed in
+            message = await channel.fetch_message(nowPlayingID) #fetch last embed message
+            await message.edit(embed=spotEmbed) #updates last embed message
+    except discord.errors.NotFound:
+        print("Failed, will retry")
+        
 @bot.command()
+#Main definition for the np command, which aims to display current information.
 async def np(ctx):
     global nowPlayingID
     global nowPlayingChannel
     global oldNowPlayingID
     global oldNowPlayingChannel
     
-    #spotEmbed = sp.spotAPIcall(spotify,'embed')
+    spotEmbed = sp.spotAPIcall(spotify,'embed') #creates the embed
     
     #global vars are created so update_activity() can access it.
     if nowPlayingID != None: #checks for existing message when called. If no existing message moves on.
@@ -258,6 +253,12 @@ async def np(ctx):
         message = await channel.fetch_message(oldNowPlayingID)
         await message.delete()
     #if no existing message, do nothing.
+
+@bot.command()
+#Main definition for the leave command, which tells the bot to disconnect but also deletes the last np message.
+async def leave(ctx):
+    print("test")
+    
 
 try:
     loop.run_until_complete(main(bot))
