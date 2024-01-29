@@ -269,4 +269,5 @@ except KeyboardInterrupt:
 
     # this sleep prevents a bugged exception on Windows
     loop.run_until_complete(asyncio.sleep(1))
+finally:
     loop.close()
