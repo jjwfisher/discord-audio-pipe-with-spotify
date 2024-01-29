@@ -1,5 +1,5 @@
 # discord-audio-pipe with spotify
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/jjwfisher/discord-audio-pipe)](https://github.com/jjwfisher/discord-audio-pipe/releases/latest)
+![GitHub Latest Release)](https://img.shields.io/github/v/release/jjwfisher/discord-audio-pipe?logo=github)
 
 Simple program to send stereo audio (microphone, stereo mix, virtual audio cable, etc) into a discord bot.
 
