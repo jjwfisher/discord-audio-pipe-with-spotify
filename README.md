@@ -6,7 +6,7 @@ Simple program to send stereo audio (microphone, stereo mix, virtual audio cable
 This fork adds Spotify functionality, to allow the bot to show what is currently playing on a user's Spotify account.
 
 You can download the latest release [**here**](https://github.com/jjwfisher/discord-audio-pipe/releases)
-- If you are using the source code, install the dependencies and start the program using `main.pyw`
+- If you are using the source code, it is recommended to create a venv (using conda, or similar), install the dependencies either manually or (preferred) using environment.yml when creating the venv with conda, and start using `main.pyw`
 - The `.exe` does not require python or dependencies
 
 ## Setting up a Bot account
@@ -20,7 +20,7 @@ You can download the latest release [**here**](https://github.com/jjwfisher/disc
 4. In the Spotify Developer Dashboard, click "Settings", then the "Basic Information" tab.
 5. When starting DAP, it will ask you for your Spotify API details. Enter your client ID, then click _"View Client Secret"_, and enter this. Finally enter the redirect url you have chosen.
 6. When a browser window opens, login in with your Spotify account (if needed), and allow acccess to your application.
-7. You should be done! In the future a browser window will open and close itself temporarily to log you in to the Spotify API.
+7. You should be done! In the future a browser window will open and close itself temporarily to log you in to the Spotify API, or if the .cache file is deleted, or not found.
 
 ## Spotify Usage
 - To create a "Now Playing" message, message `?np` to any channel the bot has access to.
