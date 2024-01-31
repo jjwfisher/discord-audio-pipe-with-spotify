@@ -5,11 +5,11 @@ block_cipher = None
 DATAPATH = os.path.abspath(os.path.join(SPECPATH, '..'))
 
 a = Analysis(
-    ['../main.pyw'],
+    ['../main.pyw', '../spotiCmds.py', '../cli.py', '../gui.py', '../sound.py'],
     pathex=[],
     binaries=[],
     datas=[(os.path.join(DATAPATH, 'assets'), './assets')],
-    hiddenimports=['PyQt5', 'discord', 'sounddevice','spotipy'],
+    hiddenimports=[],
     hookspath=['./build'],
     runtime_hooks=None,
     excludes=['numpy', 'tkinter', 'tcl'],
@@ -63,7 +63,7 @@ a.binaries = a.binaries - TOC([
     ('qt5multimedia.dll', None, None),
     ('qt5multimediawidgets.dll', None, None),
     ('qt5network.dll', None, None),
-    ('qt5networkauth.dll', None, None),
+    ('qt5networkauth.dll', None, None)
 ])
 
 a.datas = [
@@ -80,7 +80,7 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='dap',
+    name='DAPS',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

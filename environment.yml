@@ -1,0 +1,11 @@
+name: dap
+dependencies:
+- python = 3.11.5
+- pip
+- pip:
+    - opuslib
+    - sounddevice
+    - spotipy
+    - py-cord[voice]
+    - PyQt5
+    - pyinstaller

@@ -1,4 +1,0 @@
-pycord[voice]==2.4.1
-PyQt5==5.15.10
-sounddevice==0.4.6
-spotipy==2.22.1
