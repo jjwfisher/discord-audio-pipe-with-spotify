@@ -10,4 +10,4 @@ build/main
 *.bat
 .cache
 .python-version
-.GitHub.spec
+GitHub.spec
