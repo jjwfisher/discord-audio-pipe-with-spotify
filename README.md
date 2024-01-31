@@ -1,4 +1,4 @@
-# discord-audio-pipe with spotify
+# discord-audio-pipe-with-spotify
 [![GitHub Latest Release)](https://img.shields.io/github/v/release/jjwfisher/discord-audio-pipe?logo=github)](https://github.com/jjwfisher/discord-audio-pipe/releases/latest)
 
 Simple program to send stereo audio (microphone, stereo mix, virtual audio cable, etc) into a discord bot.
@@ -25,7 +25,7 @@ You can download the latest release [**here**](https://github.com/jjwfisher/disc
 ## Spotify Usage
 - To create a "Now Playing" message, message `?np` to any channel the bot has access to.
     - The bot will automatically clean up (delete) your message, and any previous messages it has sent that session. The bot requires the `Manage Messages` permission in Discord to do this. **It also requires the "Read Messages" intent, which you can give in your discord developer settings.**
-- The bot will update the latest "Now Playing" message every 5 seconds, and will also update the bot's status.
+- The bot will update the latest "Now Playing" message every 10 seconds, and will also update the bot's status.
 - If nothing is playing/Spotify is not open, a special embed message will appear noting this.
 
 ## Dependencies
