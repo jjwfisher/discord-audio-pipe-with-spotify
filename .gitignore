@@ -9,3 +9,5 @@ build/main
 *.code-workspace
 *.bat
 .cache
+.python-version
+.GitHub.spec
