@@ -6,6 +6,7 @@ dependencies:
     - opuslib
     - sounddevice
     - spotipy
-    - py-cord[voice]
+    - discord[voice]
+    - PyNaCl
     - PyQt5
     - pyinstaller
