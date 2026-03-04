@@ -153,7 +153,7 @@ class Connection:
             self.channels.addItem("None", None)
 
             for channel in selection.channels:
-                if isinstance(channel, discord.VoiceChannel):
+                if isinstance(channel, discord.VoiceChannel) or isinstance(channel, discord.StageChannel):
                     self.channels.addItem(channel.name, channel)
 
             Connection.resize_combobox(self.channels)
@@ -190,6 +190,9 @@ class Connection:
             else:
                 if self.voice is not None:
                     await self.voice.disconnect()
+
+        except asyncio.TimeoutError:
+            logging.exception("Timed out connecting to channel. The bot may not have permissions to join the channel due to custom roles.")
 
         except Exception:
             logging.exception("Error on change_channel")
