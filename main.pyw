@@ -206,7 +206,14 @@ firstCall = True
 
 bot = commands.Bot(command_prefix="?", intents = intents)
 
-asyncio.run(main(bot))
+try:
+    loop = asyncio.get_event_loop()
+except RuntimeError as e:
+    if str(e).startswith("There is no current event loop in thread"):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    else:
+        raise
 
 @bot.event
 async def on_ready():
@@ -239,7 +246,7 @@ async def np(ctx):
     spotEmbed = sp.spotAPIcall(spotify,'embed') #creates the embed
     
     #global vars are created so update_activity() can access it.
-    if nowPlayingID is not None: #checks for existing message when called. If no existing message moves on.
+    if nowPlayingID != None: #checks for existing message when called. If no existing message moves on.
         oldNowPlayingID = nowPlayingID
         oldNowPlayingChannel = nowPlayingChannel #stores existing message IDs
 
@@ -248,7 +255,7 @@ async def np(ctx):
     nowPlayingChannel = nowPlaying.channel.id #updates message IDs after creating new msg
     await ctx.message.delete() #deletes ?np command message
 
-    if oldNowPlayingID or oldNowPlayingChannel is not None: #if old message exists, fetch then delete it.
+    if oldNowPlayingID or oldNowPlayingChannel != None: #if old message exists, fetch then delete it.
         channel = bot.get_channel(oldNowPlayingChannel)
         message = await channel.fetch_message(oldNowPlayingID)
         await message.delete()
