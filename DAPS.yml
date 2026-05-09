@@ -1,12 +1,12 @@
-name: dap
 dependencies:
-- python = 3.11.5
+- python = 3.13.11
 - pip
 - pip:
     - opuslib
     - sounddevice
     - spotipy
-    - discord[voice]
+    - discord.py
     - PyNaCl
     - PyQt5
+    - davey
     - pyinstaller

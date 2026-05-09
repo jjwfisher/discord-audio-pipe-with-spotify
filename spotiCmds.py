@@ -166,4 +166,3 @@ def spotAPIcall(spotify, type):
             return createPlayingEmbed(spotData)
     else: #else if something is not playing, create the not playing embed and return this to update_activity or np command.
         return createNotPlayingEmbed()
-    
