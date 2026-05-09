@@ -164,19 +164,19 @@ async def main(bot):
                 json.dump(spotToken, outfile, indent=0)
             spotify = sp.spotifyLogin()
             spotify.current_user_playing_track()
-            
+
         # query servers and channels
         if args.online:
             await cli.query(bot, token)
 
             return
-        
+
         # GUI
         if is_gui:
             bot_ui = gui.GUI(app, bot)
             asyncio.ensure_future(bot_ui.ready())
             asyncio.ensure_future(bot_ui.run_Qt())
-            
+
         # CLI
         else:
             asyncio.ensure_future(cli.connect(bot, args.device, args.channel))
@@ -204,15 +204,22 @@ oldNowPlayingID = None
 oldNowPlayingChannel = None
 firstCall = True
 
-bot = commands.Bot(command_prefix='?', intents = intents)
+bot = commands.Bot(command_prefix="?", intents = intents)
 
-loop = asyncio.get_event_loop_policy().get_event_loop()
+try:
+    loop = asyncio.get_event_loop()
+except RuntimeError as e:
+    if str(e).startswith("There is no current event loop in thread"):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    else:
+        raise
 
 @bot.event
 async def on_ready():
     # Waiting until the bot is ready
     await bot.wait_until_ready()
-    print(f"Bot is ready!")
+    print("Bot is ready!")
     # # Starting the loop
     update_activity.start()
 
