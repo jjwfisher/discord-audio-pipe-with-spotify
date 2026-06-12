@@ -153,20 +153,20 @@ async def main(bot):
         else:
             print("Login Failed: Please check if the token is correct")
 
+    except asyncio.CancelledError:
+        if is_gui:
+            bot_ui.close()
+
+        await bot.close()
+        await asyncio.sleep(1)
+        raise
+
     except Exception:
         logging.exception("Error on main")
 
-# run program
 bot = discord.Client(intents=discord.Intents.default())
-loop = asyncio.get_event_loop_policy().get_event_loop()
 
 try:
-    loop.run_until_complete(main(bot))
-
+    asyncio.run(main(bot))
 except KeyboardInterrupt:
     print("Exiting...")
-    loop.run_until_complete(bot.close())
-
-    # this sleep prevents a bugged exception on Windows
-    loop.run_until_complete(asyncio.sleep(1))
-    loop.close()
