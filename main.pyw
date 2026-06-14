@@ -126,12 +126,12 @@ async def main(bot):
         # GUI
         if is_gui:
             bot_ui = gui.GUI(app, bot)
-            asyncio.ensure_future(bot_ui.ready())
-            asyncio.ensure_future(bot_ui.run_Qt())
+            asyncio.create_task(bot_ui.ready())
+            asyncio.create_task(bot_ui.run_Qt())
 
         # CLI
         else:
-            asyncio.ensure_future(cli.connect(bot, args.device, args.channel))
+            asyncio.create_task(cli.connect(bot, args.device, args.channel))
 
         await bot.start(token)
 
