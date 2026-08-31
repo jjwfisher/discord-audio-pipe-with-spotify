@@ -144,7 +144,7 @@ async def main(bot):
                 return
 
         # Login to Spotify BEFORE Discord
-        spotify = sp.spotifyLoginWithDialog(msg, base_dir, is_gui)
+        spotify = sp.spotify_login_with_dialog(msg, base_dir, is_gui=is_gui)
         if spotify is None:
             return
         spotify.current_user_playing_track()
