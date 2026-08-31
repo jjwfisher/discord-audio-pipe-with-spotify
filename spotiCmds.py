@@ -5,7 +5,8 @@ from time import gmtime, strftime
 
 import discord
 import spotipy
-from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QFormLayout, QLineEdit
+from dotenv import load_dotenv, set_key
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QFormLayout, QLineEdit, QMessageBox
 from spotipy.oauth2 import SpotifyOAuth
 
 firstCall = True
@@ -49,6 +50,11 @@ class spot:
 
 callNum = 0
 
+def save_tokens_to_env(env_file_path: str, token_dict: dict) -> None:
+    """Save tokens to .env file."""
+    for key, value in token_dict.items():
+        set_key(env_file_path, key, value)
+
 def spotifyLogin():
     """Grabs tokens from given file. Connects to spotify API with auto-refresh."""
     try:
@@ -87,6 +93,69 @@ def spotifyLogin():
             )
             return spotipy.Spotify(auth_manager=auth_manager)
         raise
+
+def spotify_login_with_dialog(msg: "QMessageBox", base_dir: Path, *, is_gui: bool = True) -> spotipy.Spotify | None:
+    """Handle Spotify login with dialog prompts for missing/invalid tokens.
+
+    Attempts to login to Spotify, and if tokens are missing, prompts the user
+    via a GUI dialog to enter them. Saves the tokens to the .env file and retries.
+
+    Args:
+        msg: QMessageBox instance for displaying GUI dialogs.
+        base_dir: Path to base directory where tokens.env is located.
+        is_gui: Whether running in GUI mode (default: True).
+
+    Returns:
+        Spotify API object if successful, None if user cancelled or error occurred.
+
+    """
+    # First attempt
+    try:
+        return spotifyLogin()
+    except KeyError:
+        pass  # Handle below
+
+    # KeyError: tokens missing
+    if is_gui:
+        msg.setWindowTitle("No Spotify Tokens Found")
+        msg.setText("Please enter your Spotify API credentials")
+        msg.exec()
+
+        token_dialog = spotTokenEntry()
+        if not token_dialog.exec_():
+            return None
+
+        client_id, secret_id, redirect_url = token_dialog.getInputs()
+        if not (client_id and secret_id and redirect_url):
+            msg.setWindowTitle("Error")
+            msg.setText("All fields are required")
+            msg.exec()
+            return None
+
+        save_tokens_to_env(
+            base_dir / "tokens.env",
+            {
+                "SPOT_CID": client_id,
+                "SPOT_SID": secret_id,
+                "SPOT_URI": redirect_url,
+            },
+        )
+        load_dotenv(base_dir / "tokens.env")
+    else:
+        print("Spotify tokens not found")
+        return None
+
+    # Retry once after saving tokens
+    try:
+        return spotifyLogin()
+    except spotipy.oauth2.SpotifyOauthError as e:
+        if is_gui:
+            msg.setWindowTitle("Spotify Login Failed")
+            msg.setText(str(e))
+            msg.exec()
+        else:
+            print(f"Spotify login error: {e}")
+        return None
 
 def spotDataExtract(currentTrack, nextTrack):
     """Use fetched API data, returns formatted data types accessible to the embed creator.

@@ -1,7 +1,6 @@
 import argparse
 import asyncio
 import logging
-import os
 import sys
 from os import environ
 from pathlib import Path
@@ -9,6 +8,7 @@ from pathlib import Path
 import discord
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
+from PyQt5.QtWidgets import QInputDialog
 from spotipy import oauth2
 
 import cli
@@ -126,27 +126,29 @@ async def main(bot):
         if token is None:
             error_msg = "No DISCORD token found in environment"
             if is_gui:
-                msg.setWindowTitle("Token Error")
+                msg.setWindowTitle("Discord Token Error")
                 msg.setText(error_msg)
                 msg.exec()
+
+                # Show dialog for Discord token
+                discord_token, ok = QInputDialog.getText(None, "Discord Token", "Enter your Discord bot token:")
+
+                if ok and discord_token:
+                    sp.save_tokens_to_env(base_dir / "tokens.env", {"DISCORD": discord_token})
+                    load_dotenv(base_dir / "tokens.env")
+                    token = discord_token
+                else:
+                    return
             else:
                 print(error_msg)
-            return
+                return
 
         # Login to Spotify BEFORE Discord
-        try:
-            spotify = sp.spotifyLogin()
-            spotify.current_user_playing_track()
-            print("Spotify login successful")
-        except oauth2.SpotifyOauthError as e:
-            error_msg = "Spotify token revoked or expired. Please re-authenticate."
-            if is_gui:
-                msg.setWindowTitle("Spotify Token Error")
-                msg.setText(error_msg)
-                msg.exec()
-            else:
-                print("Spotify Token Error: " + error_msg)
+        spotify = sp.spotifyLoginWithDialog(msg, base_dir, is_gui)
+        if spotify is None:
             return
+        spotify.current_user_playing_track()
+        print("Spotify login successful")
 
         # query servers and channels
         if args.online:
