@@ -12,7 +12,8 @@ from spotipy.oauth2 import SpotifyOAuth
 firstCall = True
 
 class spotTokenEntry(QDialog):
-    '''Custom input window for spotify API details if not already given.'''
+    """Custom input window for spotify API details if not already given."""
+
     def __init__(self):
         super().__init__()
 
