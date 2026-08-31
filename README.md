@@ -11,7 +11,7 @@ You can download the latest release [**here**](https://github.com/jjwfisher/disc
 
 ## Setting up a Bot account
 1. Follow the steps [**here**](https://docs.pycord.dev/en/master/discord.html) to setup and invite a discord bot
-2. To link the program to your bot, create a file ``token.txt`` in the same directory as the `.exe` / `main.pyw` and save the bot token inside
+2. When the bot starts, if not already found, it will ask you for a discord token. (stored inside tokens.env as DISCORD=<token>).
 
 ## Setting up Spotify Functions
 1. Go to the [**Spotify Developer Dashboard**](https://developer.spotify.com/dashboard), logging in with your existing spotify account if not already.
@@ -20,7 +20,7 @@ You can download the latest release [**here**](https://github.com/jjwfisher/disc
 4. In the Spotify Developer Dashboard, click "Settings", then the "Basic Information" tab.
 5. When starting DAP, it will ask you for your Spotify API details. Enter your client ID, then click _"View Client Secret"_, and enter this. Finally enter the redirect url you have chosen.
 6. When a browser window opens, login in with your Spotify account (if needed), and allow access to your application.
-7. You should be done! In the future a browser window will open and close itself temporarily to log you in to the Spotify API, or if the .cache file is deleted, or not found.
+7. You should be done! In the future a browser window will open and close itself temporarily to log you in to the Spotify API, or if the .cache file is deleted, or not found, or if the token has expired.
 
 ## Spotify Usage
 - To create a "Now Playing" message, message `?np` to any channel the bot has access to.
