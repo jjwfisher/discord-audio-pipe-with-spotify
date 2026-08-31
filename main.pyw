@@ -193,7 +193,7 @@ async def main(bot):
 # run program
 c_intents = discord.Intents.default()
 c_intents.message_content = True
-bot = discord.Client(command_prefix="?",intents=c_intents)
+bot = commands.Bot(command_prefix="?", intents = c_intents)
 
 nowPlayingID = None
 nowPlayingChannel = None
