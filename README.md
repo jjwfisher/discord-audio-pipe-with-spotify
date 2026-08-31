@@ -16,10 +16,10 @@ You can download the latest release [**here**](https://github.com/jjwfisher/disc
 ## Setting up Spotify Functions
 1. Go to the [**Spotify Developer Dashboard**](https://developer.spotify.com/dashboard), logging in with your existing spotify account if not already.
 2. On your dashboard, click "Create App"
-3. Put anything you like into all the fields, except for `"Redirect URL"`. This should be `http://localhost:xxxx`, where `xxxx` is a given port. (Shouldn't matter what you choose, I used 8080).
+3. Put anything you like into all the fields, except for `"Redirect URL"`. This should be `http://127.0.0.1:8888/callback`.
 4. In the Spotify Developer Dashboard, click "Settings", then the "Basic Information" tab.
 5. When starting DAP, it will ask you for your Spotify API details. Enter your client ID, then click _"View Client Secret"_, and enter this. Finally enter the redirect url you have chosen.
-6. When a browser window opens, login in with your Spotify account (if needed), and allow acccess to your application.
+6. When a browser window opens, login in with your Spotify account (if needed), and allow access to your application.
 7. You should be done! In the future a browser window will open and close itself temporarily to log you in to the Spotify API, or if the .cache file is deleted, or not found.
 
 ## Spotify Usage
