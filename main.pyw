@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 from os import environ
+from pathlib import Path
 
 import discord
 from discord.ext import commands, tasks
@@ -13,6 +14,9 @@ from spotipy import oauth2
 import cli
 import sound
 import spoticmds as sp
+
+# Determine base directory (works for both frozen exe and script)
+base_dir = Path(sys.argv[0]).parent if getattr(sys, "frozen", False) else Path(__file__).parent
 
 # error logging
 error_formatter = logging.Formatter(
@@ -115,7 +119,7 @@ async def main(bot):
                 print(index, device)
             return
 
-        load_dotenv(os.path.join(os.path.dirname(__file__), "tokens.env"))
+        load_dotenv(base_dir / "tokens.env")
 
         # Get Discord token
         token = environ.get("DISCORD")
