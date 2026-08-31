@@ -1,6 +1,4 @@
 __pycache__/
-token.txt
-spotTokens.json
 *.exe
 *.log
 *.dll
@@ -8,6 +6,7 @@ build/main
 *.vscode
 *.code-workspace
 *.bat
+*.env
 .cache
 .python-version
 GitHub.spec
