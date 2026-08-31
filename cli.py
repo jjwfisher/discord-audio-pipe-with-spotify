@@ -1,6 +1,8 @@
 import logging
 import sys
 
+import discord
+
 import sound
 
 
@@ -32,6 +34,7 @@ async def query(bot, token):
         channels = await guild.fetch_channels()
 
         for channel in channels:
-            print("\t", channel.id, channel.name)
+            if channel.type == discord.ChannelType.voice:
+                print("\t", channel.id, channel.name)
 
-    await bot.logout()
+    await bot.close()

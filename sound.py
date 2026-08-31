@@ -4,19 +4,16 @@ import discord
 import sounddevice as sd
 
 DEFAULT = 0
-sd.default.channels = 2
 sd.default.dtype = "int16"
 sd.default.latency = "low"
-sd.default.samplerate = 48000
-
+sd.default.channels = discord.opus._OpusStruct.CHANNELS
+sd.default.samplerate = discord.opus._OpusStruct.SAMPLING_RATE
 
 class PCMStream(discord.AudioSource):
     def __init__(self):
         discord.AudioSource.__init__(self)
         self.stream = None
-
-        # Discord reads 20 ms worth of audio at a time (20 ms * 50 == 1000 ms == 1 sec)
-        self.frames = int(sd.default.samplerate / 50)
+        self.frames = discord.opus._OpusStruct.SAMPLES_PER_FRAME
 
     def read(self):
         if self.stream is None:

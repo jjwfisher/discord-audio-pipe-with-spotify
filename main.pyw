@@ -158,11 +158,13 @@ async def main(bot):
         # GUI
         if is_gui:
             bot_ui = gui.GUI(app, bot)
-            asyncio.ensure_future(bot_ui.ready())
-            asyncio.ensure_future(bot_ui.run_Qt())
+            asyncio.create_task(bot_ui.ready())
+            asyncio.create_task(bot_ui.run_Qt())
 
         # CLI
         else:
+            asyncio.create_task(cli.connect(bot, args.device, args.channel))
+
             asyncio.ensure_future(cli.connect(bot, args.device, args.channel))
         await bot.start(token)
 
@@ -175,20 +177,29 @@ async def main(bot):
         else:
             print("Login Failed: " + error_msg)
 
+    except asyncio.CancelledError:
+        if is_gui:
+            bot_ui.close()
+
+        await bot.close()
+        await asyncio.sleep(1)
+        raise
+
     except Exception:
         base_logger.exception("Error on main")
 
 
+
 # run program
-intents = discord.Intents.default()
-intents.message_content = True
+c_intents = discord.Intents.default()
+c_intents.message_content = True
+bot = discord.Client(command_prefix="?",intents=c_intents)
+
 nowPlayingID = None
 nowPlayingChannel = None
 oldNowPlayingID = None
 oldNowPlayingChannel = None
 firstCall = True
-
-bot = commands.Bot(command_prefix="?", intents = intents)
 
 try:
     loop = asyncio.get_event_loop()
@@ -252,8 +263,7 @@ async def leave(ctx):
     
 
 try:
-    loop.run_until_complete(main(bot))
-
+    asyncio.run(main(bot))
 except KeyboardInterrupt:
     print("Exiting...")
     loop.run_until_complete(bot.close())

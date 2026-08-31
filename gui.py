@@ -5,7 +5,7 @@ import sys
 
 import discord
 from PyQt5.QtCore import QCoreApplication, QDir, QEventLoop, Qt, pyqtSignal
-from PyQt5.QtGui import QFontDatabase, QFontMetrics, QIcon
+from PyQt5.QtGui import QCursor, QFontDatabase, QFontMetrics, QIcon
 from PyQt5.QtSvg import QSvgWidget
 from PyQt5.QtWidgets import (
     QComboBox,
@@ -94,12 +94,12 @@ class Connection:
         # events
         self.devices.changed.connect(self.change_device)
         self.servers.changed.connect(
-            lambda deselected, selected: asyncio.ensure_future(
+            lambda deselected, selected: asyncio.create_task(
                 self.change_server(deselected, selected)
             )
         )
         self.channels.changed.connect(
-            lambda: asyncio.ensure_future(self.change_channel())
+            lambda: asyncio.create_task(self.change_channel())
         )
         self.mute.clicked.connect(self.toggle_mute)
 
@@ -138,7 +138,7 @@ class Connection:
                 self.stream.change_device(selection)
 
                 if self.voice.is_connected():
-                    self.voice.play(self.stream)
+                    self.voice.play(self.stream, fec=False, signal_type='music')
 
             else:
                 self.stream.change_device(selection)
@@ -155,7 +155,7 @@ class Connection:
             self.channels.addItem("None", None)
 
             for channel in selection.channels:
-                if isinstance(channel, discord.VoiceChannel):
+                if isinstance(channel, discord.VoiceChannel) or isinstance(channel, discord.StageChannel):
                     self.channels.addItem(channel.name, channel)
 
             Connection.resize_combobox(self.channels)
@@ -187,7 +187,7 @@ class Connection:
                 )
 
                 if not_playing:
-                    self.voice.play(self.stream)
+                    self.voice.play(self.stream, fec=False, signal_type='music')
 
             else:
                 if self.voice is not None:
@@ -252,18 +252,10 @@ class TitleBar(QFrame):
 
         # events
         minimize_button.clicked.connect(self.minimize)
-        close_button.clicked.connect(lambda: asyncio.ensure_future(self.close()))
+        close_button.clicked.connect(lambda: asyncio.create_task(self.close()))
 
     async def close(self):
-        # workaround for logout bug
-        for voice in self.bot.voice_clients:
-            try:
-                await voice.disconnect()
-            except Exception:
-                pass
-
-        self.bot._closed = True
-        await self.bot.ws.close()
+        await self.bot.close()
         self.parent.close()
 
     def minimize(self):
@@ -341,7 +333,7 @@ class GUI(QMainWindow):
 
     def mouseMoveEvent(self, event):
         if self.position is not None and event.buttons() == Qt.LeftButton:
-            self.move(self.pos() + event.pos() - self.position)
+            self.move(QCursor.pos() - self.position)
             event.accept()
 
     def mouseReleaseEvent(self, event):
