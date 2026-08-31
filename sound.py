@@ -1,6 +1,7 @@
+from pprint import pformat
+
 import discord
 import sounddevice as sd
-from pprint import pformat
 
 DEFAULT = 0
 sd.default.channels = 2

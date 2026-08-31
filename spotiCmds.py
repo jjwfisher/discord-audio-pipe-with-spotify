@@ -1,11 +1,12 @@
-from time import strftime
-from time import gmtime
 from datetime import datetime
+from os import environ
+from pathlib import Path
+from time import gmtime, strftime
+
 import discord
 import spotipy
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox, QFormLayout, QLineEdit
 from spotipy.oauth2 import SpotifyOAuth
-from PyQt5.QtWidgets import QDialog, QLineEdit, QFormLayout, QDialogButtonBox, QMessageBox
-import json
 
 firstCall = True
 
@@ -46,28 +47,52 @@ class spot:
         self.nxtArtName = nxtArtName
         self.nxtTrName = nxtTrName
 
-callNum = 0   
+callNum = 0
 
 def spotifyLogin():
+    """Grabs tokens from given file. Connects to spotify API with auto-refresh."""
+    try:
+        spot_cid = environ["SPOT_CID"]
+        spot_sid = environ["SPOT_SID"]
+        spot_uri = environ["SPOT_URI"]
+    except KeyError as kde:
+        msg = "Could not find tokens."
+        raise KeyError(msg) from kde
 
-    with open("spotTokens.json", 'r') as j: #load tokens if they exist
-                spotToken = json.loads(j.read())
-    '''Grabs tokens from given file. Connects to spotify API.'''
-    spotTokenDict = spotToken
+    scope = "user-read-currently-playing,user-read-playback-state"
+    cache_path = ".cache"
 
-    spyC_ID = spotTokenDict['spotifyClientID']
-    spyCS_ID = spotTokenDict['spotifySecretID']
-    spyR_URL = spotTokenDict['spotifyRedirect_URL']
-        
-    scope = "user-read-currently-playing user-read-playback-state"
-    spotify = spotipy.Spotify(auth_manager=SpotifyOAuth(spyC_ID,spyCS_ID,spyR_URL,scope=scope)) #authenticates with SpotifyOAuth method.
-    
-    return spotify
+    try:
+        auth_manager = SpotifyOAuth(
+            client_id=spot_cid,
+            client_secret=spot_sid,
+            redirect_uri=spot_uri,
+            scope=scope,
+            cache_path=cache_path,
+            show_dialog=False,  # Auto-refresh without user intervention
+        )
+        return spotipy.Spotify(auth_manager=auth_manager)
+    except spotipy.oauth2.SpotifyOauthError as e:
+        if "invalid_grant" in str(e) or "Refresh token revoked" in str(e):
+            # Clear cache and force re-auth
+            if Path.exists(cache_path):
+                Path.unlink(cache_path)
+            auth_manager = SpotifyOAuth(
+                client_id=spot_cid,
+                client_secret=spot_sid,
+                redirect_uri=spot_uri,
+                scope=scope,
+                cache_path=cache_path,
+                show_dialog=True,  # Show auth dialog on revoked token
+            )
+            return spotipy.Spotify(auth_manager=auth_manager)
+        raise
 
 def spotDataExtract(currentTrack, nextTrack):
-    '''Using fetched API data, returns formatted data types accessible to the embed creator.
-    Uses spot Class for neat output'''
+    """Use fetched API data, returns formatted data types accessible to the embed creator.
 
+    Uses spot Class for neat output.
+    """
     trackInfo = currentTrack['item'] #removes common header
     try:
         trackName = trackInfo['name'] #index 0

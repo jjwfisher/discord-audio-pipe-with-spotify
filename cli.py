@@ -1,6 +1,7 @@
-import sys
-import sound
 import logging
+import sys
+
+import sound
 
 
 async def connect(bot, device_id, channel_id):

@@ -1,4 +1,18 @@
+import argparse
+import asyncio
 import logging
+import os
+import sys
+from os import environ
+
+import discord
+from discord.ext import commands, tasks
+from dotenv import load_dotenv
+from spotipy import oauth2
+
+import cli
+import sound
+import spoticmds as sp
 
 # error logging
 error_formatter = logging.Formatter(
@@ -11,18 +25,6 @@ error_handler.setFormatter(error_formatter)
 
 base_logger = logging.getLogger()
 base_logger.addHandler(error_handler)
-
-import sys
-import cli
-import sound
-import asyncio
-import discord
-from discord.ext import tasks
-from discord.ext import commands
-import argparse
-import spotiCmds as sp
-import json
-import spotipy
 
 # commandline args
 parser = argparse.ArgumentParser(description="Discord Audio Pipe")
@@ -79,11 +81,11 @@ is_gui = not any([args.channel, args.device, args.query, args.online])
 # verbose logs
 if args.verbose:
     debug_formatter = logging.Formatter(
-        fmt="%(asctime)s:%(levelname)s:%(name)s: %(message)s"
+        fmt="%(asctime)s:%(levelname)s:%(name)s: %(message)s",
     )
 
     debug_handler = logging.FileHandler(
-        filename="discord.log", encoding="utf-8", mode="w"
+        filename="discord.log", encoding="utf-8", mode="w",
     )
     debug_handler.setFormatter(debug_formatter)
 
@@ -93,8 +95,9 @@ if args.verbose:
 
 # don't import qt stuff if not using gui
 if is_gui:
-    import gui
     from PyQt5.QtWidgets import QApplication, QMessageBox
+
+    import gui
     global msg
     global dialog
     app = QApplication(sys.argv)
@@ -110,65 +113,40 @@ async def main(bot):
         if args.query:
             for device, index in sound.query_devices().items():
                 print(index, device)
-
             return
 
-        # check for token
-        token = args.token
-        try:
-            if token is None:
-                token = open("token.txt", "r").read()
-        except FileNotFoundError:
+        load_dotenv(os.path.join(os.path.dirname(__file__), "tokens.env"))
+
+        # Get Discord token
+        token = environ.get("DISCORD")
+        if token is None:
+            error_msg = "No DISCORD token found in environment"
             if is_gui:
                 msg.setWindowTitle("Token Error")
-                msg.setText("No Token Provided")
+                msg.setText(error_msg)
                 msg.exec()
             else:
-                print("No Token Provided")
-        #check for spotify tokens
+                print(error_msg)
+            return
+
+        # Login to Spotify BEFORE Discord
         try:
             spotify = sp.spotifyLogin()
             spotify.current_user_playing_track()
-        except FileNotFoundError: #if they don't exist, grab user's tokens via either gui or cmd line and store in a file
+            print("Spotify login successful")
+        except oauth2.SpotifyOauthError as e:
+            error_msg = "Spotify token revoked or expired. Please re-authenticate."
             if is_gui:
-                dialog.exec()
-                spyC_ID, spyCS_ID, spyR_URL = dialog.getInputs()
+                msg.setWindowTitle("Spotify Token Error")
+                msg.setText(error_msg)
+                msg.exec()
             else:
-                print("Spotify token details not found, please enter below.")
-                spyC_ID = str(input('Spotify Client ID:') )
-                spyCS_ID = str(input('Spotify Secret ID:') )
-                spyR_URL = str(input('Spotify Redirect URL:') )
-
-            spotToken = {
-                    "spotifyClientID": spyC_ID,
-                    "spotifySecretID": spyCS_ID,
-                    "spotifyRedirect_URL": spyR_URL
-                    }
-            with open("spotTokens.json", 'w') as outfile:
-                json.dump(spotToken, outfile, indent=0)
-            spotify = sp.spotifyLogin()
-            spotify.current_user_playing_track()
-
-        except spotipy.oauth2.SpotifyOauthError or spotipy.requests.exceptions.HTTPError: #if spotify login fails, notify user and try again.
-            msg.setWindowTitle("Spotify Token Error")
-            msg.setText("Incorrect token(s) provided. Please reenter tokens/url")
-            msg.exec()
-            dialog.exec()
-            spyC_ID, spyCS_ID, spyR_URL = dialog.getInputs()
-            spotToken = {
-                    "spotifyClientID": spyC_ID,
-                    "spotifySecretID": spyCS_ID,
-                    "spotifyRedirect_URL": spyR_URL
-                    }
-            with open("spotTokens.json", 'w') as outfile:
-                json.dump(spotToken, outfile, indent=0)
-            spotify = sp.spotifyLogin()
-            spotify.current_user_playing_track()
+                print("Spotify Token Error: " + error_msg)
+            return
 
         # query servers and channels
         if args.online:
             await cli.query(bot, token)
-
             return
 
         # GUI
@@ -183,16 +161,16 @@ async def main(bot):
         await bot.start(token)
 
     except discord.errors.LoginFailure:
+        error_msg = "Please check if the token is correct"
         if is_gui:
             msg.setWindowTitle("Login Failed")
-            msg.setText("Please check if the token is correct")
+            msg.setText(error_msg)
             msg.exec()
-
         else:
-            print("Login Failed: Please check if the token is correct")
+            print("Login Failed: " + error_msg)
 
     except Exception:
-        logging.exception("Error on main")
+        base_logger.exception("Error on main")
 
 
 # run program

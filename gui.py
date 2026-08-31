@@ -1,24 +1,26 @@
-import os
-import sys
-import sound
 import asyncio
 import logging
+import os
+import sys
+
 import discord
-from PyQt5.QtSvg import QSvgWidget
+from PyQt5.QtCore import QCoreApplication, QDir, QEventLoop, Qt, pyqtSignal
 from PyQt5.QtGui import QFontDatabase, QFontMetrics, QIcon
-from PyQt5.QtCore import Qt, QCoreApplication, QEventLoop, QDir, pyqtSignal
+from PyQt5.QtSvg import QSvgWidget
 from PyQt5.QtWidgets import (
-    QMainWindow,
-    QPushButton,
-    QWidget,
+    QComboBox,
     QFrame,
     QGridLayout,
-    QComboBox,
-    QLabel,
     QHBoxLayout,
+    QLabel,
+    QListView,
+    QMainWindow,
+    QPushButton,
     QStyledItemDelegate,
-    QListView
+    QWidget,
 )
+
+import sound
 
 if getattr(sys, "frozen", False):
     bundle_dir = sys._MEIPASS
